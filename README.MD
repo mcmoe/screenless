@@ -1,4 +1,4 @@
-### What is this?
+## What is this?
 
 Exploring a Screenless alternative to learn through play by using video capture as input and sound as output. Are screns the only way to consume tech?
 Build fun engaging games that also get you moving.
@@ -11,6 +11,8 @@ Inputs:
 * Object recognition
 * Gesture recognition
 * Microphone
+* Physical buttons
+* NFC
 
 Output:
 
@@ -19,8 +21,9 @@ Output:
 
 Processing
 
-* Google Assitant Service
+* Google Assistant Service
 * Open CV
+* SSML
 * T2S Service
 * S2T Service
 
