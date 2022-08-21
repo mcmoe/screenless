@@ -3,13 +3,13 @@ import cv from '@u4/opencv4nodejs';
 import {grabFrames} from './utils.js';
 
 // segmenting by skin color (has to be adjusted)
-const skinColorUpper = hue => new cv.Vec(hue, 0.8 * 255, 0.6 * 255);
-const skinColorLower = hue => new cv.Vec(hue, 0.1 * 255, 0.05 * 255);
+const skinColorUpper = hue => new cv.Vec(hue, 0.8 * 255, 0.40 * 255);
+const skinColorLower = hue => new cv.Vec(hue, 0.1 * 255, 0.15 * 255);
 
 const makeHandMask = (img) => {
   // filter by skin color
   const imgHLS = img.cvtColor(cv.COLOR_BGR2HLS);
-  const rangeMask = imgHLS.inRange(skinColorLower(0), skinColorUpper(15));
+  const rangeMask = imgHLS.inRange(skinColorLower(160), skinColorUpper(179));
 
   // remove noise
   const blurred = rangeMask.blur(new cv.Size(10, 10));
@@ -49,6 +49,10 @@ const getRoughHull = (contour, maxDist) => {
 
   // group all points in local neighborhood
   const ptsBelongToSameCluster = (pt1, pt2) => ptDist(pt1, pt2) < maxDist;
+  if(hullPoints.length === 1) { // quick workaround for when only one point is detected to avoid partition error
+    console.log(hullPoints);
+    hullPoints.push(hullPoints[0]);
+  }
   const { labels } = cv.partition(hullPoints, ptsBelongToSameCluster);
   const pointsByLabel = new Map();
   labels.forEach(l => pointsByLabel.set(l, []));
