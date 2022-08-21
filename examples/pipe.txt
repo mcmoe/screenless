@@ -1,0 +1,13 @@
+ERROR running Face Recognition Facenet
+----
+.../examples/commons.js:30
+  let outputBlob = net.forward();
+                       ^
+Net::Forward - OpenCV Error: (>  (expected: 'total(os[i]) > 0'), where
+>     'total(os[i])' is 0
+> must be greater than
+>     '0' is 0
+) in void cv::dnn::dnn4_v20211220::Net::Impl::getLayerShapesRecursively(int, cv::dnn::dnn4_v20211220::Net::Impl::LayersShapesMap&), in file /home/pi/opencv/opencv-4.5.5-ecae4/opencv/modules/dnn/src/dnn.cpp, line 3899, status -2
+(Use `node --trace-uncaught ...` to show where the exception was thrown)
+
+Node.js v18.7.0

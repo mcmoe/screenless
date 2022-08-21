@@ -1,0 +1,66 @@
+{
+  "code1": {
+    "binaryData": [ 84, 114, 117, 109, 112, 101, 116 ],
+    "data": "Trumpet",
+    "chunks": [
+      {
+        "type": "byte",
+        "bytes": "[Array]",
+        "text": "Trumpet"
+      }
+    ],
+    "version": 1,
+    "location": {
+      "topRightCorner": { "x": 214.25, "y": 209 },
+      "topLeftCorner": { "x": 125.67110122458077, "y": 213.4323724782121 },
+      "bottomRightCorner": { "x": 219.85941930871277, "y": 294.1652165503252 },
+      "bottomLeftCorner": { "x": 131.75, "y": 299 },
+      "topRightFinderPattern": { "x": 200.5, "y": 224 },
+      "topLeftFinderPattern": { "x": 141.5, "y": 227 },
+      "bottomLeftFinderPattern": { "x": 145.5, "y": 284 },
+      "bottomRightAlignmentPattern": { "x": 190.90618515299707, "y": 269.3481587025689 }
+    }
+  },
+  "code2": {
+    "binaryData": [
+      104, 116, 116, 112, 115,  58,  47,  47, 119, 119,
+      119,  46, 105, 110, 118, 101, 115, 116, 111, 112,
+      101, 100, 105,  97,  46,  99, 111, 109,  47, 116,
+      101, 114, 109, 115,  47, 113,  47, 113, 117, 105,
+       99, 107,  45, 114, 101, 115, 112, 111, 110, 115,
+      101,  45, 113, 114,  45,  99, 111, 100, 101,  46,
+       97, 115, 112
+    ],
+    "data": "https://www.investopedia.com/terms/q/quick-response-qr-code.asp",
+    "chunks": [
+      {
+        "type": "byte",
+        "bytes": "[Array]",
+        "text": "https://www.investopedia.com/terms/q/quick-response-qr-code.asp"
+      }
+    ],
+    "version": 5,
+    "location": {
+      "topRightCorner": { "x": 107.93035938234081, "y": 29.13719989258292 },
+      "topLeftCorner": { "x": 29.794348653197865, "y": 14.96462801634775 },
+      "bottomRightCorner": { "x": 93.97241633991302, "y": 106.94175175987536 },
+      "bottomLeftCorner": { "x": 13.882769786335615, "y": 92.65786696398314 },
+      "topRightFinderPattern": { "x": 99.25, "y": 35 },
+      "topLeftFinderPattern": { "x": 35.75, "y": 23.5 },
+      "bottomLeftFinderPattern": { "x": 23, "y": 86.5 },
+      "bottomRightAlignmentPattern": { "x": 82.5, "y": 90.5 }
+    }
+  },
+  "gar-request": {
+    "command": "yourcommand",
+    "user": "yourusername",
+    "broadcast": false,
+    "converse": false
+  },
+  "gar-response": {
+    "html": "/server/html?v=1660730494792",
+    "response": "",
+    "audio": "/server/audio?v=1660730494792",
+    "success": true
+  }
+}
