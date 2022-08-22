@@ -76,7 +76,7 @@ export const drawRedRect = (image, rect, opts = { thickness: 2 }) =>
 /**
  * add some helpter for examples TS
  */
- const __dirname = new URL('.', import.meta.url).pathname;
+const __dirname = new URL('.', import.meta.url).pathname;
 export const dataPath = path.resolve(__dirname, 'data');
 export const getResourcePath = (name) => {
   const fullpath = path.resolve(dataPath, name || '.');
