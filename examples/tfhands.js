@@ -9,10 +9,18 @@ const delay = 10;
 const FPS = 60;
 const MSEC_PER_FRAME = 1000/FPS;
 
-const CONFIDENCE = 0.5;
+const CONFIDENCE = 0.4;
+let scale = 1;
 
 const detectorConfig = {modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING};
 const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, detectorConfig);
+
+const selectTheDots = (pose, a, b) => pose.keypoints.filter(i => i.name === a || i.name === b);
+const connectTheDots = (frameMat, a, b) => {
+  if(a.score > CONFIDENCE && b.score > CONFIDENCE) {
+    frameMat.drawLine(new cv.Point2(a.x*scale, a.y*scale), new cv.Point2(b.x*scale, b.y*scale), new cv.Vec3(0, 255, 0), 1);
+  }
+}
 
 const frameCapture = async () => {
     let frameMat = vCap.read();
@@ -27,7 +35,7 @@ const frameCapture = async () => {
     // scale down if necessary
     let maxDim = Math.max(matRGB.cols, matRGB.rows)
     matRGB = matRGB.resizeToMax(320); 
-    let scale = maxDim / Math.max(matRGB.cols, matRGB.rows); // will use this to scale back up if needed
+    scale = maxDim / Math.max(matRGB.cols, matRGB.rows); // will use this to scale back up if needed
 
     // convert to 3d tensor
     const buffer = new Uint8Array(matRGB.getData().buffer);
@@ -56,6 +64,10 @@ const frameCapture = async () => {
       15: left_ankle
      --------------- */
 
+    /* to connect
+        * ...
+    */
+
     // label all kep points deemed confident enough
     poses.forEach((pose) => {
       pose.keypoints.filter(i => i.score > CONFIDENCE).forEach((keypoint) => {
@@ -64,23 +76,12 @@ const frameCapture = async () => {
         frameMat.putText(name, new cv.Point2(x*scale+10, y*scale+10), cv.FONT_HERSHEY_SIMPLEX, 0.3, new cv.Vec3(0, 0, 255), 1);
       });
 
-      // draw right elbow to wrist
-      const relbow = pose.keypoints.find(i => i.name === 'right_elbow'); // 8
-      const rwrist = pose.keypoints.find(i => i.name === 'right_wrist'); // 10
-      if(relbow.score > 0.5 && rwrist.score > CONFIDENCE) {
-        const rightElbow = new cv.Point2(relbow.x*scale, relbow.y*scale);
-        const rightWrist = new cv.Point2(rwrist.x*scale, rwrist.y*scale);
-        frameMat.drawLine(rightElbow, rightWrist, new cv.Vec3(0, 255, 0), 1);
-      }
+      connectTheDots(frameMat, ...selectTheDots(pose, 'right_elbow', 'right_wrist'));
+      connectTheDots(frameMat, ...selectTheDots(pose, 'left_elbow', 'left_wrist'));
+      connectTheDots(frameMat, ...selectTheDots(pose, 'left_shoulder', 'right_shoulder'));
+      connectTheDots(frameMat, ...selectTheDots(pose, 'left_elbow', 'left_shoulder'));
+      connectTheDots(frameMat, ...selectTheDots(pose, 'right_elbow', 'right_shoulder'));
       
-      // draw left elbow to wrist
-      const lelbow = pose.keypoints.find(i => i.name === 'left_elbow'); // 7
-      const lwrist = pose.keypoints.find(i => i.name === 'left_wrist'); // 9
-      if(lelbow.score > 0.5 && lwrist.score > CONFIDENCE) {
-        const leftElbow = new cv.Point2(lelbow.x*scale, lelbow.y*scale);
-        const leftWrist = new cv.Point2(lwrist.x*scale, lwrist.y*scale);
-        frameMat.drawLine(leftElbow, leftWrist, new cv.Vec3(0, 255, 0), 1);
-      }
     });
 
     cv.imshow('Video Capture', frameMat);
