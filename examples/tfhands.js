@@ -15,11 +15,32 @@ let scale = 1;
 const detectorConfig = {modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING};
 const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, detectorConfig);
 
-const selectTheDots = (pose, a, b) => pose.keypoints.filter(i => i.name === a || i.name === b);
+const poseToMap = (pose) => {
+  const poseMap = {};
+  pose.keypoints.forEach(k => poseMap[k.name] = k);
+  return poseMap;
+}
+
 const connectTheDots = (frameMat, a, b) => {
   if(a.score > CONFIDENCE && b.score > CONFIDENCE) {
     frameMat.drawLine(new cv.Point2(a.x*scale, a.y*scale), new cv.Point2(b.x*scale, b.y*scale), new cv.Vec3(0, 255, 0), 1);
   }
+}
+
+const forearmsUpDetection = (poseMap) => {
+  let rightForearmUp = false;
+  if(poseMap['right_elbow'].score > CONFIDENCE && poseMap['right_wrist'].score > CONFIDENCE) {
+    rightForearmUp = poseMap['right_elbow'].y > poseMap['right_wrist'].y;
+  }
+
+  let leftForearmUp = false;
+  if(poseMap['left_elbow'].score > CONFIDENCE && poseMap['left_wrist'].score > CONFIDENCE) {
+    leftForearmUp = poseMap['left_elbow'].y > poseMap['left_wrist'].y;
+  }
+
+  if(leftForearmUp && rightForearmUp) { /* BOTH! */ console.log('BOTH!'); }
+  else if (leftForearmUp) { /* LEFT! */ console.log('LEFT!'); }
+  else if (rightForearmUp) { /* RIGHT! */ console.log('RIGHT!'); }
 }
 
 const frameCapture = async () => {
@@ -39,12 +60,10 @@ const frameCapture = async () => {
 
     // convert to 3d tensor
     const buffer = new Uint8Array(matRGB.getData().buffer);
-    // console.log([matRGB.rows, matRGB.cols, matRGB.channels]);
     let tFrame = tf.tensor3d(buffer, [matRGB.rows, matRGB.cols, matRGB.channels]); // ex: [480, 640, 3]
 
     const poses = await detector.estimatePoses(tFrame);
-    // console.log(JSON.stringify(poses));
-    
+
     /* ---------------
       0: nose
       1: left_eye
@@ -64,10 +83,6 @@ const frameCapture = async () => {
       15: left_ankle
      --------------- */
 
-    /* to connect
-        * ...
-    */
-
     // label all kep points deemed confident enough
     poses.forEach((pose) => {
       pose.keypoints.filter(i => i.score > CONFIDENCE).forEach((keypoint) => {
@@ -76,12 +91,14 @@ const frameCapture = async () => {
         frameMat.putText(name, new cv.Point2(x*scale+10, y*scale+10), cv.FONT_HERSHEY_SIMPLEX, 0.3, new cv.Vec3(0, 0, 255), 1);
       });
 
-      connectTheDots(frameMat, ...selectTheDots(pose, 'right_elbow', 'right_wrist'));
-      connectTheDots(frameMat, ...selectTheDots(pose, 'left_elbow', 'left_wrist'));
-      connectTheDots(frameMat, ...selectTheDots(pose, 'left_shoulder', 'right_shoulder'));
-      connectTheDots(frameMat, ...selectTheDots(pose, 'left_elbow', 'left_shoulder'));
-      connectTheDots(frameMat, ...selectTheDots(pose, 'right_elbow', 'right_shoulder'));
-      
+      const poseMap = poseToMap(pose);
+      forearmsUpDetection(poseMap);
+      connectTheDots(frameMat, poseMap['right_elbow'], poseMap['right_wrist']);
+      connectTheDots(frameMat, poseMap['left_elbow'], poseMap['left_wrist']);
+      connectTheDots(frameMat, poseMap['left_shoulder'], poseMap['right_shoulder']);
+      connectTheDots(frameMat, poseMap['left_shoulder'], poseMap['right_shoulder']);
+      connectTheDots(frameMat, poseMap['left_elbow'], poseMap['left_shoulder']);
+      connectTheDots(frameMat, poseMap['right_elbow'], poseMap['right_shoulder']);      
     });
 
     cv.imshow('Video Capture', frameMat);
