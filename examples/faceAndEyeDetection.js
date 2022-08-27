@@ -48,9 +48,11 @@ grabFrames(0, 1, function(image) {
     console.log(faceRect);
     const fontScale = 1;
     const red = new cv.Vec(0, 0, 255);
+    const yellow = new cv.Vec(0, 255, 255);
     const point = new cv.Point(faceRect.x, faceRect.y-20)
     const modelName = frontalModel ? 'frontal' : 'profile';
-    image.putText(modelName, point, cv.FONT_ITALIC, fontScale, { color: red, thickness: 2 });
+    const color = frontalModel ? red : yellow;
+    image.putText(modelName, point, cv.FONT_ITALIC, fontScale, { color: color, thickness: 2 });
     
     // draw eyes detection in face region
     eyeRects.forEach(eyeRect => drawGreenRect(faceRegion, eyeRect));
