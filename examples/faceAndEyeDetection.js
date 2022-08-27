@@ -3,17 +3,23 @@ import cv from '@u4/opencv4nodejs';
 import { grabFrames, drawBlueRect, drawGreenRect  } from './utils.js';
 
 grabFrames(0, 1, function(image) {
-    const faceClassifier = new cv.CascadeClassifier(cv.HAAR_FRONTALFACE_DEFAULT);
+    const faceFrontalClassifier = new cv.CascadeClassifier(cv.HAAR_FRONTALFACE_DEFAULT);
+    const faceProfileClassifier = new cv.CascadeClassifier(cv.HAAR_PROFILEFACE);
     const eyeClassifier = new cv.CascadeClassifier(cv.HAAR_EYE);
     
-    // detect faces
-    const faceResult = faceClassifier.detectMultiScale(image.bgrToGray());
+    // detect faces (frontal or profile)
+    const faceFrontalResult = faceFrontalClassifier.detectMultiScale(image.bgrToGray());
+    const faceProfileResult = faceProfileClassifier.detectMultiScale(image.bgrToGray());
+    const frontalModel = faceFrontalResult.objects.length > 0;
+    const profileModel = faceProfileResult.objects.length > 0;
     
-    if (!faceResult.objects.length) {
+    if (!faceFrontalResult.objects.length && !faceProfileResult.objects.length) {
         cv.imshow('face detection', image);
         return;
     }
-    
+
+    const faceResult = frontalModel ? faceFrontalResult : faceProfileResult;
+    console.log(faceResult);
     const sortByNumDetections = result => result.numDetections
       .map((num, idx) => ({ num, idx }))
       .sort(((n0, n1) => n1.num - n0.num))
@@ -21,6 +27,7 @@ grabFrames(0, 1, function(image) {
     
     // get best result
     const faceRect = faceResult.objects[sortByNumDetections(faceResult)[0]];
+    console.log(`[model] frontal: ${frontalModel} | profile: ${profileModel}`);
     console.log('faceRects:', faceResult.objects);
     console.log('confidences:', faceResult.numDetections);
     
