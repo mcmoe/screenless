@@ -6,7 +6,7 @@ grabFrames(0, 1, function(image) {
     const faceFrontalClassifier = new cv.CascadeClassifier(cv.HAAR_FRONTALFACE_DEFAULT);
     const faceProfileClassifier = new cv.CascadeClassifier(cv.HAAR_PROFILEFACE);
     const eyeClassifier = new cv.CascadeClassifier(cv.HAAR_EYE);
-    
+
     // detect faces (frontal or profile)
     const faceFrontalResult = faceFrontalClassifier.detectMultiScale(image.bgrToGray());
     const faceProfileResult = faceProfileClassifier.detectMultiScale(image.bgrToGray());
@@ -44,6 +44,13 @@ grabFrames(0, 1, function(image) {
     
     // draw face detection
     drawBlueRect(image, faceRect);
+
+    console.log(faceRect);
+    const fontScale = 1;
+    const red = new cv.Vec(0, 0, 255);
+    const point = new cv.Point(faceRect.x, faceRect.y-20)
+    const modelName = frontalModel ? 'frontal' : 'profile';
+    image.putText(modelName, point, cv.FONT_ITALIC, fontScale, { color: red, thickness: 2 });
     
     // draw eyes detection in face region
     eyeRects.forEach(eyeRect => drawGreenRect(faceRegion, eyeRect));
