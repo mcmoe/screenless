@@ -20,9 +20,9 @@ const json = JSON.parse(result.data); // Parse data from detected QR Code
 // console.log(json);
 
 // Check if info decoded is equal to info encoded
-console.log('[text]', text.localeCompare(json.text) ? 'success' : 'failure', '|| [signature]', signature === json.sig ? 'success' : 'failure');
+console.log('[text]', text.localeCompare(json.text) ? '✅' : '⛔', '|| [signature]', signature === json.sig ? '✅' : '⛔');
 
 // verify signature of original text using public key
-console.log('[data integrity] ', crypto.verify('SHA256', Buffer.from(text), publicKey, Buffer.from(json.sig, 'base64')));
+console.log('[data integrity]', crypto.verify('SHA256', Buffer.from(text), publicKey, Buffer.from(json.sig, 'base64')) ? '✅' : '⛔');
 
 console.log('done');
