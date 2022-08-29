@@ -26,7 +26,9 @@ const playThat = (file) => {
   });
 };
 
-export const speak = (text) => {
+export const speak = async (text) => {
     const file = await speechThat(text);
     await playThat(file);
 }
+
+// speak('this is a dog');

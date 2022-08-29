@@ -26,3 +26,4 @@ console.log('[text]', text.localeCompare(json.text) ? '✅' : '⛔', '|| [signat
 console.log('[data integrity]', crypto.verify('SHA256', Buffer.from(text), publicKey, Buffer.from(json.sig, 'base64')) ? '✅' : '⛔');
 
 console.log('done');
+
