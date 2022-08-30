@@ -9,7 +9,8 @@ const speechThat = async (text) => {
   const file = `${process.env.AUDIO_DIR}tmp.wav`;
   const pipeline = promisify(stream.pipeline);
   await pipeline(
-    got.stream(`http://localhost:5002/api/tts?text=${text}`),
+    // got.stream(`http://localhost:5002/api/tts?text=${text}`), mozilla/tts
+    got.stream(`http://localhost:5005/api/tts?text=${text}`), // coqui-ai/tts
     fs.createWriteStream(file)
   );
   return file;
